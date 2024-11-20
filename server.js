@@ -1,11 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');  // Importando o CORS
 const { generatePaymentValidation, paymentCodeValidation } = require('./utils/validations');
 const PaymentController = require('./controllers/paymentController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Configuração do CORS
+app.use(cors({
+  origin: 'http://127.0.0.1:5500', // Substitua com a origem do seu frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.use(helmet());
 app.use(express.json());
