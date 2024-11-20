@@ -36,10 +36,8 @@ app.get('/payment/:paymentCode', async (req, res) => {
 // Gerar pagamento
 app.post('/payment', async (req, res) => {
     try {
-        const paymentData = {
-            store_code: process.env.MANGOFY_STORE_CODE,
-            ...req.body
-        };
+        // Remova a adição automática do store_code, pois já virá no body
+        const paymentData = { ...req.body };
 
         // Validações básicas
         if (!paymentData.payment_method) {
@@ -52,17 +50,17 @@ app.post('/payment', async (req, res) => {
         // Campos obrigatórios por método
         switch(paymentData.payment_method) {
             case 'credit_card':
-                if (!paymentData.card) {
+                if (!paymentData.card || !paymentData.card.card_number) {
                     return res.status(400).json({ message: "Dados do cartão são obrigatórios" });
                 }
                 break;
             case 'pix':
-                if (!paymentData.pix) {
+                if (!paymentData.pix || !paymentData.pix.key) {
                     return res.status(400).json({ message: "Dados do PIX são obrigatórios" });
                 }
                 break;
             case 'billet':
-                if (!paymentData.billet) {
+                if (!paymentData.billet || !paymentData.billet.customer_name) {
                     return res.status(400).json({ message: "Dados do boleto são obrigatórios" });
                 }
                 break;
