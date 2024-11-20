@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Configurações padrão para requisições à API Mangofy
 const mangofyConfig = {
-    baseURL: process.env.MANGOFY_BASE_URL,
+    baseURL: 'https://checkout.mangofy.com.br', // URL base correta
     headers: {
         'Authorization': process.env.MANGOFY_SECRET_KEY,
         'Store-Code': process.env.MANGOFY_STORE_CODE,
@@ -20,17 +20,6 @@ const mangofyConfig = {
 
 // Criar instância do Axios para facilitar interceptação
 const mangofyApi = axios.create(mangofyConfig);
-
-// Middleware para log de erros
-mangofyApi.interceptors.response.use(
-    response => response,
-    error => {
-        console.error('Erro na API Mangofy:', 
-            error.response ? error.response.data : error.message
-        );
-        throw error;
-    }
-);
 
 // Buscar pagamento
 app.get('/payment/:paymentCode', async (req, res) => {
@@ -48,8 +37,8 @@ app.get('/payment/:paymentCode', async (req, res) => {
 app.post('/payment', async (req, res) => {
     try {
         const paymentData = {
-            ...req.body,
-            store_code: process.env.MANGOFY_STORE_CODE
+            store_code: process.env.MANGOFY_STORE_CODE,
+            ...req.body
         };
 
         // Validações básicas
